@@ -17,9 +17,53 @@ function take_snapshot(){
 
 console.log("ml5 version: ", ml5_version);
 
-classify = ml5.imageClassifier('https://teachablemachine.withgoogle.com/models/dAQuudDOW/model.json', modelLoaded);
+var classifier = ml5.imageClassifier('https://teachablemachine.withgoogle.com/models/dAQuudDOW/model.json ',modelLoaded);
 
 function modelLoaded(){
     console.log("Model loaded!");
 }
 
+function speak(){
+    var synth = window.speechSynthesis;
+    speak_data_1 = "The first prediction is " + prediction_1;
+    speak_data_2 = "The second prediction is " + prediction_2;
+    var utterThis = new SpeechSynthesisUtterance(speak_data_1 + speak_data_2);
+    synth.speak(utterThis);
+}
+
+function check(){
+    var img = document.getElementById("captured_image");
+    classifier.classify(img, gotResult);
+}
+
+function gotResult(error, results){
+    if (error){
+        console.error(error);
+        console.log(errror);
+    }
+    else{
+        console.log(results);
+        document.getElementById("result_gesture_name").innerHTML = results[0].label;
+        prediction_1 = results[0].label;
+        var confidence = results[0].confidence * 100;
+        confidence = confidence.toFixed(2);
+        document.getElementById("update_gesture").innerHTML = confidence;
+        speak();
+        if (results[0].label == "ok"){
+            document.getElementById("gesture").innerHTML = "&#128076";
+        }
+        if (results[0].label == "thumb_up"){
+            document.getElementById("gesture").innerHTML = "&#128077";
+        }
+        if (results[0].label == "thumb_down"){
+            document.getElementById("gesture").innerHTML = "&#128078";
+        }
+        if (results[0].label == "rock"){
+            document.getElementById("gesture").innerHTML = "&#9994";
+        }
+        if (results[0].label == "paper"){
+            document.getElementById("gesture").innerHTML = "&#9995";
+        }
+
+    }
+}
